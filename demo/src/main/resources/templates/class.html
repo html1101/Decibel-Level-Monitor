@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+    <!-- Given a specific class, show graph of class volume over time -->
+    <head>
+        <link href='http://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="class.css">
+    </head>
+    <body>
+        <u class="big_text" th:text="${className}"></u>
+        <br>
+        <br>
+        Over the past week, this class has been <u>20% louder</u> than average.
+
+        <br>
+        <canvas id="sketch"></canvas>
+        <br>
+
+        Risk level: <u>Moderate</u>
+        <!-- Chart.js; makes drawing the chart look much nicer than if we were to do it on our own. -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+        <script src="class.js"></script>
+    </body>
+</html>

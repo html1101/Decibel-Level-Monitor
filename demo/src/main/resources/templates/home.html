@@ -1,10 +1,56 @@
-<!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
-<head> 
-    <title>Getting Started: Serving Web Content</title> 
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-</head>
-<body>
-    <p th:text="'Hello, ' + ${name} + '!'" />
-</body>
+<!-- Home page -->
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Decibel Level Monitor</title>
+        <link rel="stylesheet" href="home.css">
+        <link href='http://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+    </head>
+    <body>
+        <!-- Profile -->
+        <div class="large_txt">Profile</div>
+        <br>
+        <!-- Person, a nice picture, a description of them -->
+        <div id="profile">
+            <img src="person.jpg">
+            <div class="side">
+                <b>Sample Person 1</b>
+                <br>
+                Computer Science Teacher at <u>Keystone School</u>
+            </div>
+        </div>
+        <br>
+
+        <div class="large_txt">My Classes</div>
+        <!-- List of classes -->
+        <div th:text="${classList}"></div>
+        <table class="class_list">
+            <th th:each="class : ${classList}">
+                <tr>
+                    <!-- <td th:text="${class.className}"></td>
+                    <td th:text="${class.to}"></td>
+                    <td th:text="${class.from}"></td> -->
+                </tr>
+            </th>
+            <!-- Sample: <tr>
+                <td>Algebra 1</td>
+                <td>8:30 - 9:15 <span class="x">x</span></td>
+            </tr>
+            <tr>
+                <td>AP CS</td>
+                <td>9:30 - 10:15 <span class="x">x</span></td>
+            </tr> -->
+            <tr id="add_class_inp">
+                <td>
+                    <input class="class_name">
+                </td>
+                <td>
+                    <input type="time" class="t1"> to <input type="time" class="t2">
+                </td>
+            </tr>
+        </table>
+        <button id="add_class">Add Class</button>
+        
+        <script src="home.js"></script>
+    </body>
 </html>

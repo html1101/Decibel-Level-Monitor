@@ -1,0 +1,79 @@
+/* Establish fonts, etc */
+body {
+    font-family: "Lato";
+    font-size: 13px;
+    /* Width that we'll constrain to */
+    --wid-screen: 450px;
+}
+
+.large_txt {
+    font-size: 1.5em;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+}
+
+#profile {
+    display: flex;
+    width: var(--wid-screen);
+    border: 2px solid red;
+}
+
+#profile > * {
+    flex-grow: 1;
+}
+
+#profile > img {
+    min-width: 100px;
+    width: 100px;
+    padding: 5px;
+    flex-grow: 0.3;
+    border-right: 2px solid red;
+}
+
+#profile > .side {
+    padding-left: 5px;
+}
+
+#profile > .side > b {
+    position: relative;
+    display: inline-block;
+    margin-top: 7px;
+    margin-bottom: 5px;
+    font-size: 15px;
+}
+
+.class_list {
+    width: var(--wid-screen);
+}
+
+.class_list td:nth-child(2) {
+    text-align: right;
+}
+
+.x {
+    position: relative;
+    display: inline-block;
+    color: red;
+    transition: 0.2s;
+    width: 1.2em;
+    height: 1.2em;
+    line-height: 1.2em;
+    text-align: center;
+    top: -0.1em;
+    opacity: 0;
+    cursor: pointer;
+}
+
+tr:hover .x {
+    opacity: 1;
+}
+
+/* Row for adding a class */
+#add_class_inp {
+    position: relative;
+    display: none;
+}
+
+#add_class_inp input.class_name {
+    max-width: calc(var(--wid-screen) / 2);
+}
