@@ -22,16 +22,19 @@
         <br>
 
         <div class="large_txt">My Classes</div>
-        <!-- List of classes -->
-        <div th:text="${classList}"></div>
+        <!-- List of classes: some debugging stuff -->
+        <!-- <div th:text="${classList}"></div> -->
         <table class="class_list">
-            <th th:each="class : ${classList}">
-                <tr>
-                    <!-- <td th:text="${class.className}"></td>
-                    <td th:text="${class.to}"></td>
-                    <td th:text="${class.from}"></td> -->
-                </tr>
-            </th>
+            <tr>
+                <th>Class Name</th>
+                <th>Start</th>
+                <th>End</th>
+            </tr>
+            <tr th:each="class : ${classList}">
+                <td th:text="${class.className}">Class</td>
+                <td th:text="${class.start}">Start</td>
+                <td th:text="${class.end}">End</td>
+            </tr>
             <!-- Sample: <tr>
                 <td>Algebra 1</td>
                 <td>8:30 - 9:15 <span class="x">x</span></td>

@@ -46,7 +46,7 @@ body {
     width: var(--wid-screen);
 }
 
-.class_list td:nth-child(2) {
+.class_list td:nth-child(2), .class_list td:nth-child(3) {
     text-align: right;
 }
 

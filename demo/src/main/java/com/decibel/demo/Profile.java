@@ -1,27 +1,28 @@
 package com.decibel.demo;
 
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Entity;
 
 // Where our profile containing info about our user will be kept.
-
 public class Profile {
     private String name, profile_path, description;
     private ArrayList<classStruct> classes = new ArrayList<classStruct>();
 
     // Given a class name, start point, and ending point, create class struct.
-    private class classStruct {
+    @Entity
+    public static class classStruct {
         private String className;
-        private LocalDateTime to, from;
-        private DateTimeFormatter formatMethod = DateTimeFormatter.ofPattern("HH:mm:ss a");
-        
+        private LocalTime to, from;
+        private DateTimeFormatter formatMethod = DateTimeFormatter.ofPattern("HH:mm");
+
         public classStruct(String class_n, String start, String end) {
             className = class_n;
-            to = LocalDateTime.parse(start, formatMethod);
-            from = LocalDateTime.parse(end, formatMethod);
+            to = LocalTime.parse(start, formatMethod);
+            from = LocalTime.parse(end, formatMethod);
         }
 
         public String getClassName() {
@@ -34,6 +35,20 @@ public class Profile {
 
         public String getEnd() {
             return from.format(formatMethod);
+        }
+
+        public String toString() {
+            return className + ": " + to + " to " + from;
+        }
+
+        public void setStart(String start) {
+            System.out.println(start);
+            to = LocalTime.parse(start, formatMethod);
+        }
+
+        public void setEnd(String end) {
+            System.out.println(end);
+            from = LocalTime.parse(end, formatMethod);
         }
     }
 

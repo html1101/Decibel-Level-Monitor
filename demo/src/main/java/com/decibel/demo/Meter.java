@@ -9,6 +9,7 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.LineUnavailableException;
 import java.util.ArrayList;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 // Runnable is a class that can be put into a thread so that this can be executed separately from main.
@@ -115,5 +116,13 @@ public class Meter {
 
     public ArrayList<Float> getRMSList() {
         return avg_rms;
+    }
+
+    // Given from starting time to ending time, get the list of all rms points we found at that stage
+    public ArrayList<Float> getRange(String point_1, String point_2) {
+        LocalTime p1 = LocalTime.parse(point_1);
+        LocalTime p2 = LocalTime.parse(point_2);
+        
+        // Go through points that range from these points
     }
 }

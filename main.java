@@ -5,7 +5,11 @@ import javax.swing.JPanel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 
-public class main extends JFrame {
+import java.time.format.DateTimeFormatter;
+import java.time.LocalTime;
+
+
+public class main {
     // JFrame
     static JFrame f;
 
@@ -17,17 +21,9 @@ public class main extends JFrame {
 
     public static void main(String[] args) {
         // Display text
-        f = new JFrame();
-        l = new JLabel("Decibel Level Monitor");
+        DateTimeFormatter formatMethod = DateTimeFormatter.ofPattern("HH:mm");
 
-        // Set the size of the frame
-        f.setSize(800, 800);
-
-        // Create profile
-        Profile p = new Profile("Hello", "Testing", "Bla");
-
-        p.draw(f);
-        
-        f.show();
+        LocalTime t = LocalTime.parse("05:13", formatMethod);
+        System.out.println(t);
     }
 }
