@@ -62,7 +62,7 @@ public class Profile {
         return name;
     }
 
-    public String getProfile() {
+    public String getProfilePath() {
         return profile_path;
     }
 
@@ -86,5 +86,13 @@ public class Profile {
 
     public List<classStruct> getClasses() {
         return classes;
+    }
+
+    // Try and find this class. If we can't find it, return null.
+    public classStruct getThisClass(String className) {
+        for(classStruct i : classes) {
+            if(i.getClassName().equals(className)) return i;
+        }
+        return null;
     }
 }

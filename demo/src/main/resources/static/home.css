@@ -1,9 +1,13 @@
 /* Establish fonts, etc */
 body {
-    font-family: "Lato";
+    font-family: "Lato" !important;
     font-size: 13px;
     /* Width that we'll constrain to */
     --wid-screen: 450px;
+
+    --pink: #F650F6;
+    background: #5E6366;
+    color: white;
 }
 
 .large_txt {
@@ -15,7 +19,6 @@ body {
 #profile {
     display: flex;
     width: var(--wid-screen);
-    border: 2px solid red;
 }
 
 #profile > * {
@@ -23,11 +26,11 @@ body {
 }
 
 #profile > img {
-    min-width: 100px;
-    width: 100px;
+    min-width: 50px;
+    width: 50px;
     padding: 5px;
     flex-grow: 0.3;
-    border-right: 2px solid red;
+    background: white;
 }
 
 #profile > .side {
@@ -44,10 +47,6 @@ body {
 
 .class_list {
     width: var(--wid-screen);
-}
-
-.class_list td:nth-child(2), .class_list td:nth-child(3) {
-    text-align: right;
 }
 
 .x {
@@ -70,10 +69,103 @@ tr:hover .x {
 
 /* Row for adding a class */
 #add_class_inp {
-    position: relative;
+    position: fixed;
     display: none;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+#add_class_inp input {
+    background: #313537;
+    border-radius: 2px;
+    border: none;
+    border-bottom: 1.5px solid transparent;
+    transition: 0.2s;
+    color: white;
+    outline: none;
 }
 
 #add_class_inp input.class_name {
-    max-width: calc(var(--wid-screen) / 2);
+    max-width: calc(var(--wid-screen) - 100px);
+}
+
+#add_class_inp input:focus {
+    outline: none;
+    border-bottom: 1.5px solid var(--pink);
+}
+
+#class_inp {
+    position: relative;
+    text-align: center;
+    padding: 15px;
+    margin: auto;
+    max-width: 300px;
+    top: 50%;
+    height: 200px;
+    margin-top: -100px;
+    background: #5E6366;
+    border-radius: 5px;
+}
+
+table td:nth-child(1) {
+    width: 2em;
+    text-align: center;
+}
+
+table td:nth-child(2) {
+    font-weight: 550;
+}
+
+table td:nth-child(4), table td:nth-child(3) {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+table {
+    border-spacing: 0;
+    -webkit-border-vertical-spacing: 5px;
+}
+
+table tr {
+    position: relative;
+    padding-top: 1em;
+    padding-bottom: 1em;
+    border-radius: 10px;
+}
+
+.img {
+    position: relative;
+    display: inline-block;
+    width: 1.5em;
+    height: 1.5em;
+    padding: 0.5em;
+    line-height: 1.5em;
+    border-radius: 100%;
+}
+
+button {
+    background: var(--pink);
+    font-family: "Lato";
+    color: white;
+    border: 2px solid var(--pink);
+    padding: 5px;
+    transition: 0.2s;
+    border-radius: 3px;
+    padding-left: 2em;
+    padding-right: 2em;
+}
+
+button:hover {
+    box-shadow: 0.5px 1px 4px 0px #00000027;
+}
+
+.add {
+    position: relative;
+    margin-top: 1em;
+}
+
+.class {
+    cursor: pointer;
 }

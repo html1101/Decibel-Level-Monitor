@@ -12,11 +12,11 @@
         <br>
         <!-- Person, a nice picture, a description of them -->
         <div id="profile">
-            <img src="person.jpg">
+            <img th:src="${userProfilePath}">
             <div class="side">
-                <b>Sample Person 1</b>
+                <b th:text="${userName}">Sample Person 1</b>
                 <br>
-                Computer Science Teacher at <u>Keystone School</u>
+                <span th:text="${description}"></span>
             </div>
         </div>
         <br>
@@ -25,15 +25,11 @@
         <!-- List of classes: some debugging stuff -->
         <!-- <div th:text="${classList}"></div> -->
         <table class="class_list">
-            <tr>
-                <th>Class Name</th>
-                <th>Start</th>
-                <th>End</th>
-            </tr>
             <tr th:each="class : ${classList}">
-                <td th:text="${class.className}">Class</td>
+                <td><div th:text="${class.className[0]}" class="img"></div></td>
+                <td th:text="${class.className}" onclick="window.location.href = `${encodeURI('/class?className=' + this.innerText)}`" class="class">Class</td>
                 <td th:text="${class.start}">Start</td>
-                <td th:text="${class.end}">End</td>
+                <td th:text="${class.end}">End <span class="x">x</span></td>
             </tr>
             <!-- Sample: <tr>
                 <td>Algebra 1</td>
@@ -43,15 +39,20 @@
                 <td>AP CS</td>
                 <td>9:30 - 10:15 <span class="x">x</span></td>
             </tr> -->
-            <tr id="add_class_inp">
-                <td>
-                    <input class="class_name">
-                </td>
-                <td>
-                    <input type="time" class="t1"> to <input type="time" class="t2">
-                </td>
-            </tr>
         </table>
+        
+        <div id="add_class_inp">
+            <div id="class_inp">
+                <div class="large_txt">Add a Class</div>
+                <br>
+                Class Name: <input class="class_name">
+                <br>
+                <br>
+                <input type="time" class="t1"> to <input type="time" class="t2">
+                <br>
+                <button class="add">Add Class</button>
+            </div>
+        </div>
         <button id="add_class">Add Class</button>
         
         <script src="home.js"></script>

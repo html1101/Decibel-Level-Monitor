@@ -9,20 +9,33 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.LineUnavailableException;
 import java.util.ArrayList;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.util.HashMap;
 import java.time.format.DateTimeFormatter;
 
 // Runnable is a class that can be put into a thread so that this can be executed separately from main.
 public class Meter {
     // We can change stopped to stop running our audio level thread 
     private boolean stopped = false;
+
+    // Use to keep track of the time minute-by-minute
     private RMSTimestamp r_time = new RMSTimestamp();
-    private ArrayList<Float> avg_rms = new ArrayList<Float>();
-    private ArrayList<String> freq = new ArrayList<String>();
-        
-    // How to format dates
-    private DateTimeFormatter formatMethod = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-    
+
+    // HashMap containing hour, then the days & their measurement in that hour.
+    // Sample: { "9:00": { "3-21-22": [0.1, 0.3, 0.1] }  }
+    private HashMap<String, HashMap<String,  ArrayList<Float>>> calc = new HashMap<String, HashMap<String,  ArrayList<Float>>>();
+
+    // hh:mm
+    public String timeToString(int hr, int min) {
+        return String.format("%2s", hr).replace(" ", "0") + ":" + String.format("%2s", min).replace(" ", "0");
+    }
+
+    // dd-mm-yyyy
+    public String getDate() {
+        DateTimeFormatter formatMethod = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+
+        return LocalDateTime.now().format(formatMethod);
+    }
+
     // Contains RMS list w/ some timestamp
     private class RMSTimestamp {
         private float sum_rms = 0;
@@ -40,9 +53,27 @@ public class Meter {
             int min = LocalDateTime.now().getMinute();
 
             if(n.getSecond() == 0 && alreadyResp != min) {
-                // Passed an hour, time to stop
-                System.out.println("Hour passed");
-                avg_rms.add(sum_rms / counter);
+                // Minute passed, find average of points that passed in this moment
+                float avg_rms = sum_rms / counter;
+                String t = timeToString(n.getHour(), 0);
+                
+                // Place this in calc.
+                // 1) Check if there are existing records at this hour.
+                if(calc.containsKey(t)) {
+                    // There is! Now check if there are some for this date.
+                    if(!calc.get(t).containsKey(getDate())) {
+                        // 2) Create array for this date.
+                        System.out.println("There is not an existing array for date: " + getDate() + " at hour " + t);
+                        // There isn't an array existing for this date, create it.
+                        calc.get(t).put(getDate(), new ArrayList<Float>());
+                    }
+                } else {
+                    // There aren't existing records at this hour, create them.
+                    HashMap<String, ArrayList<Float>> new_hr = new HashMap<String, ArrayList<Float>>();
+                    new_hr.put(getDate(), new ArrayList<Float>());
+                    calc.put(t, new_hr);
+                }
+                calc.get(t).get(getDate()).add((float)(20 * Math.log10(avg_rms)));
 
                 // Reset
                 sum_rms = 0;
@@ -50,7 +81,6 @@ public class Meter {
 
                 // Push new hour that we are at now
                 alreadyResp = min;
-                freq.add(LocalDateTime.now().format(formatMethod));
             }
         }
     }
@@ -114,15 +144,16 @@ public class Meter {
         }
     }
 
-    public ArrayList<Float> getRMSList() {
-        return avg_rms;
-    }
-
-    // Given from starting time to ending time, get the list of all rms points we found at that stage
-    public ArrayList<Float> getRange(String point_1, String point_2) {
-        LocalTime p1 = LocalTime.parse(point_1);
-        LocalTime p2 = LocalTime.parse(point_2);
-        
-        // Go through points that range from these points
+    public HashMap<String,ArrayList<Float>> getRMSList(String time) {
+        for(String t : calc.keySet()) {
+            for(String k : calc.get(t).keySet()) {
+                System.out.println("Time: " + t + ", " + k + ": " + calc.get(t).get(k));
+            }
+        }
+        if(calc.containsKey(time)) {
+            // Return avg rms points separated by date
+            return calc.get(time);
+        }
+        return new HashMap<>();
     }
 }

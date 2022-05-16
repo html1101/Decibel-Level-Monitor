@@ -15,26 +15,47 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import java.util.HashMap;
 
 import java.util.ArrayList;
+import java.util.Scanner;
+
+import javax.persistence.Entity;
 
 @Controller
 public class WebControl {
 	// Initialize volume control lib
 	Meter new_meter = new Meter();
 	Thread t1 = new Thread(new_meter.new RunIt());
+	Profile me;
 
 	public WebControl() {
-		System.out.println("Starting");
+		// Starting monitoring...
 		t1.start();
-	}
+		
+		// Initialize profile
+		Scanner init = new Scanner(System.in);
+		System.out.print("Enter user's name: ");
+		String name = init.nextLine();
+		System.out.print("Enter a description about the user: ");
+		String desc = init.nextLine();
 
-	// Initialize empty profile
-	Profile me = new Profile("Yo", "Some random teacher", "Some random description");
+		me = new Profile(name, "./person.jpg", desc);
+		init.close();
+	}
 
 	@GetMapping("/class")
 	public String greeting(@RequestParam(name="className", required=true) String name, Model model) {
 		model.addAttribute("className", name);
+
+		// Get this class, then put some info about it in our addObject
+		Profile.classStruct findClass = me.getThisClass(name);
+		if(findClass != null) {
+			// We found this class, send some info about it
+			System.out.println("Found Class!");
+			model.addAttribute("RMSInfo", new_meter.getRMSList(findClass.getStart()));
+			model.addAttribute("startTime", findClass.getStart());
+		}
 		return "class";
 	}
 
@@ -42,6 +63,9 @@ public class WebControl {
 	public ModelAndView goHome() {
 		ModelAndView mav = new ModelAndView("home");
 		mav.addObject("classList", me.getClasses());
+		mav.addObject("userName", me.getName());
+		mav.addObject("userProfilePath", me.getProfilePath());
+		mav.addObject("description", me.getDesc());
 		return mav;
 	}
 
@@ -58,12 +82,12 @@ public class WebControl {
 
 	@GetMapping("/getResp")
 	@ResponseBody
-	public ArrayList<Float> arr() {
-		return new_meter.getRMSList();
+	public HashMap<String,ArrayList<Float>> arr(@RequestParam(name="time", required=true) String time) {
+		return new_meter.getRMSList(time);
 	}
 
 	@PostMapping("/addClass")
-	public ResponseEntity addClass(@RequestBody Profile.classStruct classN) {
+	public ResponseEntity<HttpStatus> addClass(@RequestBody Profile.classStruct classN) {
 		// Add this class
 
 		System.out.println("Adding class...");
@@ -71,5 +95,21 @@ public class WebControl {
 		me.addClass(classN.getClassName(), classN.getStart(), classN.getEnd());
 
 		return ResponseEntity.ok(HttpStatus.OK);
+	}
+
+	@Entity
+	public static class classInf {
+		private String className;
+		public String getClassName() {
+			return className;
+		}
+	}
+	@PostMapping("getClassInfo")
+	public String information(@RequestBody classInf c) {
+		// Get class + return information
+		Profile.classStruct findClass = me.getThisClass(c.getClassName());
+		if(findClass != null) {
+			return "CLASS=" + c.getClassName() + "\n" + "STARTS=" + findClass.getStart() + "\nENDS=" + findClass.getEnd();
+		} else return "";
 	}
 }

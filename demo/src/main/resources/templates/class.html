@@ -1,23 +1,98 @@
 <!DOCTYPE html>
 <html>
-    <!-- Given a specific class, show graph of class volume over time -->
-    <head>
-        <link href='http://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
-        <link rel="stylesheet" href="class.css">
-    </head>
-    <body>
-        <u class="big_text" th:text="${className}"></u>
-        <br>
-        <br>
-        Over the past week, this class has been <u>20% louder</u> than average.
+<!-- Given a specific class, show graph of class volume over time -->
 
-        <br>
-        <canvas id="sketch"></canvas>
-        <br>
+<head>
+    <link href='http://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="class.css">
+</head>
 
-        Risk level: <u>Moderate</u>
-        <!-- Chart.js; makes drawing the chart look much nicer than if we were to do it on our own. -->
-        <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
-        <script src="class.js"></script>
-    </body>
+<body>
+    <u class="big_text" th:text="${className}"></u>
+    <br>
+    <br>
+    <span id="insight">Over the past week, this class has been <u>20% louder</u> than average.</span>
+
+    <br>
+    <canvas id="sketch"></canvas>
+    <!-- Chart.js; makes drawing the chart look much nicer than if we were to do it on our own. -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+    <script th:inline="javascript">
+        var data_pts = /*[[${RMSInfo}]]*/;
+
+        // Go through data
+        
+        let names = Object.keys(data_pts);
+        if(names.length == 0) {
+            // We have no data points yet
+            document.getElementById("insight").innerText = "No data points yet on this class!"
+        } else {
+            document.getElementById("insight").innerText = "";
+            let labels = [];
+            if(names.length > 3) {
+                labels = names;
+            } else {
+                Array.from({length: names.map(s => data_pts[s].length).reduce((a, b) => a+b)}).fill("")
+                // Iterate through labels and push time
+                let start_hrs = /*[[${startTime}]]*/, start_mins = /*[[${startTime}]]*/, min_counter = 0;
+                start_hrs = Number(start_hrs.split(":")[0]);
+                start_mins = Number(start_mins.split(":")[1]);
+
+                names.forEach(s => {
+                    data_pts[s].forEach(p => {
+                        labels.push(start_hrs + ":" + start_mins.toString().padStart(2, "0"));
+                        if(start_mins + 1 > 59) {
+                            start_mins = 0;
+                            start_hrs++;
+                        } else start_mins++;
+                    })
+                })
+            }
+            
+            // Normalize Db values
+            let min_data_pt = 1;
+            names.forEach(data_point => {
+                for(let i = 0; i < data_pts[data_point].length; i++) {
+                    if(data_pts[data_point][i] < min_data_pt) min_data_pt = data_pts[data_point][i];
+                }
+            });
+
+            let data = [];
+            names.forEach(data_point => {
+                if(names > 3) {
+                    // Find average of data points
+                    data.push(data_pts[data_point].reduce((a, b) => a+b) / names[data_point].length - min_data_pt);
+                } else {
+                    // Display all points
+                    for(let i = 0; i < data_pts[data_point].length; i++) data.push(data_pts[data_point][i] - min_data_pt);
+                }
+            });
+
+            const data_plot = {
+                labels: labels,
+                datasets: [{
+                    label: /*[[${className}]]*/,
+                    backgroundColor: 'rgb(255, 99, 132)',
+                    borderColor: 'rgb(255, 99, 132)',
+                    data: data,
+                }]
+            };
+
+            const config = {
+                type: 'line',
+                data: data_plot,
+                options: {
+                    maintainAspectRatio: false,
+                    responsive: false
+                }
+            };
+
+            const myChart = new Chart(
+                document.getElementById('sketch'),
+                config
+            );
+        }
+    </script>
+</body>
+
 </html>
